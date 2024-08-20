@@ -30,3 +30,25 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initial display of votes
     updateVoteDisplay();
 });
+.comments-section {
+    margin: 2em 0;
+    padding: 1em;
+    background-color: rgba(255, 255, 255, 0.8);
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+#comment-input {
+    width: 100%;
+    padding: 0.5em;
+    margin-bottom: 1em;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+#comments-container p {
+    background-color: #f9f9f9;
+    padding: 0.5em;
+    border-radius: 5px;
+    margin-bottom: 0.5em;
+}
