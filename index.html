@@ -176,14 +176,85 @@
     <h3>انتهت الملحمة</h3>
         <h6>تيل بحيدر</h6>
 </div>
+<script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-analytics.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyB9Idn0hOJ62onR2BRyqDg2jKhcZpUA-kU",
+    authDomain: "donkey-9f569.firebaseapp.com",
+    projectId: "donkey-9f569",
+    storageBucket: "donkey-9f569.appspot.com",
+    messagingSenderId: "989629937582",
+    appId: "1:989629937582:web:f4e1d018cdbf8aee587a3f",
+    measurementId: "G-TMQY9XRG63"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+</script>
 </body>
 </html>
 
-<h2>تصويت</h2>
-<p>اختر من فاز في الهجاء:</p>
-<div>
-    <button id="vote-hameed">حميد بن عباس</button>
-    <button id="vote-muntathar">منتظر بن مبدر</button>
+<div class="vote-section">
+    <h2>تصويت</h2>
+    <p>اختر من فاز في الهجاء:</p>
+    <div class="vote-buttons">
+        <button id="vote-hameed" class="vote-button">حميد بن عباس</button>
+        <button id="vote-muntathar" class="vote-button">منتظر بن مبدر</button>
+    </div>
+    <p id="vote-status">Loading votes...</p>
 </div>
-<p id="vote-status">Loading votes...</p>
 
+<script>
+    const voteStatus = document.getElementById('vote-status');
+    
+    // Retrieve votes from Firebase
+    database.ref('votes').on('value', (snapshot) => {
+        const votes = snapshot.val() || { hameed: 0, muntathar: 0 };
+        voteStatus.innerHTML = `حميد بن عباس: ${votes.hameed} الأصوات<br>منتظر بن مبدر: ${votes.muntathar} الأصوات`;
+    });
+
+    // Voting functions
+    document.getElementById('vote-hameed').addEventListener('click', function() {
+        database.ref('votes/hameed').transaction((currentVotes) => (currentVotes || 0) + 1);
+    });
+    document.getElementById('vote-muntathar').addEventListener('click', function() {
+        database.ref('votes/muntathar').transaction((currentVotes) => (currentVotes || 0) + 1);
+    });
+</script>
+<div class="comments-section">
+    <h2>التعليقات</h2>
+    <div id="comments-container"></div>
+    <textarea id="comment-input" placeholder="اكتب تعليقك هنا..."></textarea>
+    <button id="submit-comment" class="vote-button">إرسال</button>
+</div>
+
+<script>
+    const commentsContainer = document.getElementById('comments-container');
+    const commentInput = document.getElementById('comment-input');
+    const submitCommentButton = document.getElementById('submit-comment');
+
+    // Load comments from Firebase
+    database.ref('comments').on('child_added', (snapshot) => {
+        const comment = snapshot.val();
+        const commentElement = document.createElement('p');
+        commentElement.textContent = comment.text;
+        commentsContainer.appendChild(commentElement);
+    });
+
+    // Submit a new comment
+    submitCommentButton.addEventListener('click', function() {
+        const newComment = commentInput.value;
+        if (newComment) {
+            database.ref('comments').push({ text: newComment });
+            commentInput.value = ''; // Clear the input
+        }
+    });
+</script>
