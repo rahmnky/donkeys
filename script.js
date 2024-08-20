@@ -52,3 +52,31 @@ document.addEventListener('DOMContentLoaded', function() {
     border-radius: 5px;
     margin-bottom: 0.5em;
 }
+const voteCountRef = firebase.database().ref('votes');
+
+voteCountRef.on('value', (snapshot) => {
+    const votes = snapshot.val();
+    document.getElementById('voteCount').textContent = votes;
+});
+
+function vote() {
+    voteCountRef.transaction((currentVotes) => {
+        return currentVotes + 1;
+    });
+}
+const commentsRef = firebase.database().ref('comments');
+
+commentsRef.on('child_added', (snapshot) => {
+    const comment = snapshot.val();
+    const li = document.createElement('li');
+    li.textContent = comment.text;
+    document.getElementById('commentsList').appendChild(li);
+});
+
+function addComment() {
+    const commentInput = document.getElementById('commentInput').value;
+    if (commentInput) {
+        commentsRef.push({ text: commentInput });
+        document.getElementById('commentInput').value = '';  // Clear the input
+    }
+}
